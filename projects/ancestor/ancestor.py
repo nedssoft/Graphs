@@ -1,33 +1,58 @@
 
-from projects.graph.util import Queue
-class Graph:
+from queue import Queue
+from graph import Graph
 
-    """Represent a graph as a dictionary of vertices mapping labels to edges."""
-    def __init__(self):
-        self.vertices = {}
-
-    def add_vertex(self, vertex_id):
-        """
-        Add a vertex to the graph.
-        """
-        if not vertex_id in self.vertices:
-            self.vertices[vertex_id] = set()
-
-    def add_edge(self, v1, v2):
-        """
-        Add a directed edge to the graph.
-        """
-        if v1 in self.vertices and v2 in self.vertices:
-            self.vertices[v1].add(v2)
-        else:
-            raise IndexError('Trying to link a non-existing edge')
-
-    def get_neighbors(self, vertex_id):
-        """
-        Get all neighbors (edges) of a vertex.
-        """
-        return self.vertices[vertex_id]
-        
-    
 def earliest_ancestor(ancestors, starting_node):
-    pass
+    # Initialize a graph
+    graph = Graph()
+    # build a graph of the parents and children
+    # Iterate over ancestors' tuple (parent, child)
+    for parent, child in ancestors:
+
+        # check if the parent is not in the vertices
+        if parent not in graph.vertices:
+
+            # Add parent to the graph vertices
+            graph.add_vertex(parent)
+        # check if the child is not in the vertices
+        if child not in graph.vertices:
+            # Add parent to the graph vertices
+            graph.add_vertex(child)
+        
+        # Create an edge of child and parent
+        graph.add_edge(child,parent)
+
+    # Apply BFS
+
+    # Initialize a queue
+    q = Queue()
+    # enqueue the starting_node
+    q.enqueue(starting_node)
+    # Initialize a visited set
+    visited = set()
+    # Set the earliest_ancestor to None
+    earliest_ancestor = None
+    # While the queue is not empty
+    while q.size() > 0:
+        # Assign the head to the earliest_ancestor
+        earliest_ancestor = q.dequeue()
+        # Check if the earliest_ancestor has not been visited
+        if earliest_ancestor not in visited:
+
+            # If not visited,get the neighbors
+            neighbors = graph.get_neighbors(earliest_ancestor)
+
+            # Iterate the neighbors and enqueue
+            for neighbor in neighbors:
+                q.enqueue(neighbor)
+            
+            # Add the earliest_ancestor to the visited
+            visited.add(earliest_ancestor)
+
+    # If the earliest_ancestor at this point is still the starting_node, yeye dey smell
+    if earliest_ancestor == starting_node:
+        # Return -1
+        return -1
+    else:
+        # Return the earliest_ancestor
+        return earliest_ancestor   
