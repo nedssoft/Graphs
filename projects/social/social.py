@@ -89,7 +89,35 @@ class SocialGraph:
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
        
+        q = Queue()
+        # enqueue a list holding the user_id
+        q.enqueue([user_id])
+        
+        # while the queue is not empty
+        while q.size() > 0:
+            # dequeue to the path
+            path = q.dequeue()
+            
+            # set a vert to the last item in the path
+            user = path[-1]
+           
+            # if vert is not in visited
+            if user not in visited:
+                # if vert is equal to target value
+                visited[user] = path
+                # loop over next vert in vertices at the index of vert
+                for friend in self.friendships[user]:
+                    # set a new path equal to a new list of the path (copy)
 
+                    if friend not in visited:
+
+                        new_path = path.copy()
+                        # append next vert to new path
+                        new_path.append(friend)
+                    # enqueue the new path
+                        q.enqueue(new_path)
+        # return None
+        return visited
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(1000, 10)
